@@ -42,11 +42,29 @@ function refreshFilterList() {
     list.innerHTML = "";
 
     chrome.storage.sync.get([storageKey], function (data) {
-        for (let name of Object.keys(data[storageKey])) {
-            let item = document.createElement("li");
-            item.textContent = name;
+        let any = false;
+        
+        if (data && data[storageKey]) {
+            for (let name of Object.keys(data[storageKey])) {
+                any = true;
 
-            list.appendChild(item);
+                let item = document.createElement("li");
+                item.textContent = name;
+                
+                let deleteButton = document.createElement("button");
+                deleteButton.className = "btn btn-delete";
+                deleteButton.innerHTML = "&times;"
+                item.appendChild(deleteButton);
+
+                let applyButton = document.createElement("button");
+                applyButton.className = "btn";
+                applyButton.textContent = "Apply";
+                item.appendChild(applyButton);
+
+                list.appendChild(item);
+            }
         }
+
+        elements.savedFilters.style.display = (any ? "block" : "none");
     });
 }

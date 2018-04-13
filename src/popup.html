@@ -2,22 +2,89 @@
 <html>
 <head>
     <style>
-        html { 
+        html, body { 
+            font-size: 16px;
+            margin: 0;
             width: 400px;
+        }
+
+        #heading {
+            background-color: #282828;
+            color: white;
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+        #heading img {
+            margin-right: 10px;
+            vertical-align: middle;
+            width: 100px;
+        }
+        #heading span {
+            vertical-align: middle;
+        }
+
+        #board-description {
+            background-color: #96c93d;
+            color: white;
+            font-size: 18px;
+        }
+
+        #saved-filters>span {
+            font-size: 18px;
+        }
+        #saved-filters .btn {
+            float: right;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .btn {
+            background-color: #96c93d;
+            border: none;
+            border-radius: 3px;
+            box-shadow: 0 2px #7aa52e;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;    
+            outline: none;
+            margin: 0 2px;
+            padding: 4px 14px;
+            transition: background-color 200ms ease-in-out;
+        }
+        .btn:hover {
+            background-color: #7aa52e;
+            box-shadow: 0 2px #5c7d23;
+        }
+
+        .btn-delete {
+            background-color: #f06360;
+            box-shadow: 0 2px #b34141;
+            padding: 4px 8px;
+        }
+        .btn-delete:hover {
+            background-color: #b34141;
+            box-shadow: 0 2px #873232;
         }
     </style>
 </head>
 <body>
-    <h1>LeanKit Filter Manager</h1>
-
-    <div>
-        <strong>Board</strong>: <span id="board-name"></span> (<span id="board-id"></span>)
+    <div id="heading" class="container">
+        <img src="images/lk.png">
+        <span>Filter Manager</span>
     </div>
 
-    <button id="save">Save current filters</button>
+    <div id="board-description" class="container">
+        <span id="board-name"></span> (<span id="board-id"></span>)
+    </div>
 
-    <div id="saved-filters">
-        <h2>Saved filters</h2>
+    <div id="toolbar" class="container">
+        <button id="save" class="btn">Save Current Filters</button>
+    </div>
+    
+    <div id="saved-filters" class="container">
+        <span>Saved filters</span>
         <ul></ul>
     </div>
 
