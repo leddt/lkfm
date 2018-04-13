@@ -54,11 +54,13 @@ function refreshFilterList() {
                 let deleteButton = document.createElement("button");
                 deleteButton.className = "btn btn-delete";
                 deleteButton.innerHTML = "&times;"
+                deleteButton.addEventListener("click", () => deleteFilter(name));
                 item.appendChild(deleteButton);
 
                 let applyButton = document.createElement("button");
                 applyButton.className = "btn";
                 applyButton.textContent = "Apply";
+                applyButton.addEventListener("click", () => applyFilter(data[storageKey][name]));
                 item.appendChild(applyButton);
 
                 list.appendChild(item);
@@ -67,4 +69,19 @@ function refreshFilterList() {
 
         elements.savedFilters.style.display = (any ? "block" : "none");
     });
+}
+
+function deleteFilter(name) {
+    chrome.storage.sync.get([storageKey], function (data) {
+        data[storageKey] = data[storageKey] || {};
+        delete data[storageKey][name];
+
+        chrome.storage.sync.set(data, function() {
+            refreshFilterList();
+        });
+    });
+}
+
+function applyFilter(data) {
+    console.log("APPLY", data);
 }
