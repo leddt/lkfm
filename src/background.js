@@ -6,10 +6,7 @@ chrome.runtime.onInstalled.addListener(function() {
                     pageUrl: {
                         hostSuffix: ".leankit.com",
                         pathPrefix: "/board/"
-                    },
-                    css: [
-                        "div.filter"
-                    ]
+                    }
                 })
             ],
             actions: [

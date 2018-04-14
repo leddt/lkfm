@@ -84,4 +84,5 @@ function deleteFilter(name) {
 
 function applyFilter(data) {
     chrome.tabs.sendMessage(tabId, {message: "applyFilter", data: data});
+    window.close();
 }

@@ -17,6 +17,8 @@ function getBoard() {
 }
 
 function getFilters() {
+    ensureFiltersOpen();
+
     return {
         mode: q(".filter-modeButton.is-selected").textContent,
         title: q("#board-filter-title").value,
@@ -61,6 +63,8 @@ function getFilter(node) {
 
 
 function applyFilters(data) {
+    ensureFiltersOpen();
+    
     for (button of qq(".filter-modeButton")) {
         if (button.textContent === data.mode) {
             button.click();
@@ -121,6 +125,13 @@ function applyFilters(data) {
         if (hadToLoad) {
             q(".accordion-title", node).click();
         }
+    }
+}
+
+
+function ensureFiltersOpen() {
+    if (!q("div.filter")) {
+        q(".svgIcon--filter").parentElement.click();
     }
 }
 
