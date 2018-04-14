@@ -5,10 +5,10 @@ let elements = {
     savedFilters: document.getElementById("saved-filters")
 };
 
-let boardId, storageKey;
+let tabId, boardId, storageKey;
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    let tabId = tabs[0].id;
+    tabId = tabs[0].id;
 
     chrome.tabs.sendMessage(tabId, {message: "getBoard"}, (response) => {
         elements.boardName.textContent = response.name;
@@ -83,5 +83,5 @@ function deleteFilter(name) {
 }
 
 function applyFilter(data) {
-    console.log("APPLY", data);
+    chrome.tabs.sendMessage(tabId, {message: "applyFilter", data: data});
 }

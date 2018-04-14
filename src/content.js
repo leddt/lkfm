@@ -4,6 +4,8 @@ chrome.runtime.onMessage.addListener(
             sendResponse(getBoard());
         else if (request.message === "getFilters") 
             sendResponse(getFilters());
+        else if (request.message === "applyFilter")
+            applyFilters(request.data);
     }
 );
 
@@ -56,6 +58,73 @@ function getFilter(node) {
     return result;
 }
 
+
+
+function applyFilters(data) {
+    for (button of qq(".filter-modeButton")) {
+        if (button.textContent === data.mode) {
+            button.click();
+            break;
+        }
+    }
+
+    setInputText(q("#board-filter-title"), data.title);
+
+    for (let node of qq(".filter-panels .accordion")) {
+        let name = q(".accordion-header", node).textContent;
+        let config = data.filters.find(f => f.name === name);
+        
+        let hadToLoad = false;
+        if (mustLoadContent(node)) {
+            hadToLoad = true;
+            q(".accordion-title", node).click();
+        }
+
+        if (isCheckboxListFilter(node)) {
+            for (let cb of qq(".checkList-item", node)) {
+                let isChecked = cb.classList.contains("is-selected");
+                let shouldCheck = !!config && config.values.indexOf(cb.textContent) >= 0;
+                if (isChecked !== shouldCheck) {
+                    cb.click();
+                }
+            }
+        } else if (isActivityFilter(node)) {
+            if (config && config.card) {
+                let arrow = q(".Select-arrow-zone", node);
+                arrow.dispatchEvent(createMouseEvent("mousedown"));
+                
+                let option = q(`.Select-option[aria-label='${config.card}']`);
+                option.dispatchEvent(createMouseEvent("mousedown"));
+            }
+
+            setInputText(q(".filter-daysInput", node), config ? config.days : "")
+        } else if (isDateRangeFilter(node)) {
+            let fields = qq(".filter-dateInput", node);
+            for (let i = 0; i < fields.length; i++) {
+                setInputText(fields[i], config && config.dates ? config.dates[i] : "");
+            }
+        } else if (isRelativeDateFilter(node)) {
+            let fields = qq(".filter-daysInput", node);
+            for (let i = 0; i < fields.length; i++) {
+                setInputText(fields[i], config && config.days ? config.days[i] : "");
+            }
+        } else if (isTagsFilter(node)) {
+
+            let existingTags = qq(".token-remove", node);
+            for (let tag of existingTags) { tag.click(); }
+
+            if (config && config.tags && config.tags.length > 0) {
+                alert("Sorry, restoring tags is not yet supported");
+            }
+        }
+
+        if (hadToLoad) {
+            q(".accordion-title", node).click();
+        }
+    }
+}
+
+
 function mustLoadContent(node) {
     return q(".accordion-content", node).children.length === 0;
 }
@@ -90,4 +159,27 @@ function qq(selector, context) {
 }
 function nl2array(nl) {
     return Array.prototype.slice.call(nl);
+}
+
+function createMouseEvent(type) {
+    let ev = document.createEvent("MouseEvents");
+    ev.initEvent(type, true, true);
+    return ev;
+}
+function createHtmlEvent(type) {
+    let ev = document.createEvent("HTMLEvents");
+    ev.initEvent(type, true, true);
+    return ev;
+}
+function createKeyboardEvent(type, keyCode) {
+    let ev = document.createEvent("KeyboardEvent");
+    ev.initEvent(type, true, true);
+    ev.keyCode = keyCode;
+    return ev;
+}
+
+function setInputText(input, text) {
+    input.value = text;
+    input.dispatchEvent(createHtmlEvent("change"));
+    input.dispatchEvent(createHtmlEvent("blur"));
 }
