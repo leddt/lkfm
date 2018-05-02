@@ -40,8 +40,37 @@
             float: right;
         }
 
+        #overwrite-warning {
+            color: #b0b0b0;
+            margin: 8px 0 0 0;
+        }
+        #overwrite-warning svg {
+            fill: #b0b0b0;
+            width: 14px;
+            height: 14px;
+            vertical-align: middle;
+        }
+
         .container {
             padding: 10px;
+        }
+
+        input {
+            border-radius: 3px;
+            border: 1px solid #dbdfd8;
+            color: #282828;
+            font-size: 0.8125rem;
+            padding: 4px;
+            transition: all 0.2s ease-in-out;
+        }
+        input:focus {
+            border-color: #96c93d;
+            box-shadow: #96c93d 0 0 2px;
+            outline: none;
+        }
+
+        input#name {
+            vertical-align: middle;
         }
 
         .btn {
@@ -56,6 +85,11 @@
             margin: 0 2px;
             padding: 4px 14px;
             transition: background-color 200ms ease-in-out;
+        }
+        .btn:disabled {
+            cursor: default;
+            opacity: 0.5;
+            pointer-events: none;
         }
         .btn:hover {
             background-color: #7aa52e;
@@ -84,7 +118,11 @@
     </div>
 
     <div id="toolbar" class="container">
-        <button id="save" class="btn">Save Current Filters</button>
+        <input id="name" placeholder="Enter filter name"><button id="save" class="btn" disabled>Save Current Filters</button>
+        <p id="overwrite-warning" style="display: none">
+            <svg id="svgIcon-info" viewBox="0 0 12 12"><g><path d="M6 0a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm1 9H5V5h2v4zm0-5H5V2h2v2z"></path></g></svg>
+            Saving will overwrite existing filter.
+        </p>
     </div>
     
     <div id="saved-filters" class="container">

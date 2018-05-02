@@ -2,10 +2,14 @@ let elements = {
     boardName: document.getElementById("board-name"),
     boardId: document.getElementById("board-id"),
     saveButton: document.getElementById("save"),
-    savedFilters: document.getElementById("saved-filters")
+    savedFilters: document.getElementById("saved-filters"),
+    nameInput: document.getElementById("name"),
+    overwriteWarning: document.getElementById("overwrite-warning")
 };
 
 let tabId, boardId, storageKey;
+
+let filterNames = [];
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     tabId = tabs[0].id;
@@ -20,26 +24,52 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         refreshFilterList();
     });
 
-    elements.saveButton.addEventListener("click", () => {
-        chrome.tabs.sendMessage(tabId, {message: "getFilters"}, (currentFilters) => {
-            let name = prompt("Choose a name for this filter", "New filter");
+    elements.saveButton.addEventListener("click", onSaveClicked);
+    elements.nameInput.addEventListener("keyup", onNameChanged);
+    elements.nameInput.addEventListener("keyup", (ev) => {
+        if (ev.keyCode === 13) {
+            onSaveClicked();
+        }
+    });
+});
 
-            chrome.storage.sync.get([storageKey], function (data) {
-                data[storageKey] = data[storageKey] || {};
-                data[storageKey][name] = currentFilters;
+function onNameChanged() {
+    elements.overwriteWarning.style.display = "none";
+    elements.saveButton.disabled = true;
 
-                chrome.storage.sync.set(data, function() {
-                    refreshFilterList();
-                });
+    const name = elements.nameInput.value;
+    if (!name) return;
+
+    elements.saveButton.disabled = false;
+
+    if (filterNames.includes(name))
+        elements.overwriteWarning.style.display = "block";
+}
+
+function onSaveClicked() {
+    const name = elements.nameInput.value;
+    if (!name) return;
+
+    chrome.tabs.sendMessage(tabId, {message: "getFilters"}, (currentFilters) => {
+        chrome.storage.sync.get([storageKey], function (data) {
+            data[storageKey] = data[storageKey] || {};
+            data[storageKey][name] = currentFilters;
+
+            chrome.storage.sync.set(data, function() {
+                elements.nameInput.value = "";
+                onNameChanged();
+
+                refreshFilterList();
             });
         });
     });
-});
+}
 
 function refreshFilterList() {
     let list = elements.savedFilters.querySelector("ul");
     
     list.innerHTML = "";
+    filterNames = [];
 
     chrome.storage.sync.get([storageKey], function (data) {
         let any = false;
@@ -47,6 +77,7 @@ function refreshFilterList() {
         if (data && data[storageKey]) {
             for (let name of Object.keys(data[storageKey])) {
                 any = true;
+                filterNames.push(name);
 
                 let item = document.createElement("li");
                 item.textContent = name;
