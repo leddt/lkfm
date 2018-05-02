@@ -1,6 +1,6 @@
 {
     "name": "LeanKit Filter Manager",
-    "version": "0.2",
+    "version": "0.3",
     "description": "Save and restore LeanKit filters!",
     "manifest_version": 2,
 
